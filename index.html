@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WEBP · AVIF → PNG 변환기 (오프라인, 정적 사이트)</title>
+  <meta name="description" content="브라우저에서 오프라인으로 WEBP/AVIF 이미지를 PNG로 일괄 변환합니다. 파일은 서버로 업로드되지 않습니다." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='10' fill='%23008cff'/%3E%3Cpath fill='white' d='M12 16h24v4H12zm0 8h24v4H12zm0 8h24v4H12z'/%3E%3C/svg%3E"/>
+  <style>
+    :root {
+      --bg: #f7f8fb;
+      --card: #ffffff;
+      --border: #e5e7eb;
+      --text: #0f172a;
+      --muted: #64748b;
+      --brand: #0ea5e9;
+      --brand-pressed: #0284c7;
+      --ring: rgba(14,165,233,.35);
+      --ok: #16a34a;
+      --warn: #eab308;
+      --err: #ef4444;
+      --radius: 16px;
+      --shadow: 0 10px 25px rgba(2,6,23,.06), 0 2px 6px rgba(2,6,23,.08);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans KR, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
+      color: var(--text); background: radial-gradient(1200px 800px at 10% -10%, #e0f2fe, transparent 40%), var(--bg);
+    }
+    .container { max-width: 1100px; margin: 0 auto; padding: 28px 16px 60px; }
+    header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: 18px; }
+    .brand { display:flex; gap:12px; align-items:center; }
+    .brand svg { width:34px; height:34px; }
+    .brand h1 { font-size: clamp(20px, 3vw, 28px); margin:0; letter-spacing: -.02em; }
+    .sub { color: var(--muted); font-size: 14px; margin-top:4px; }
+
+    .panel { background: var(--card); border:1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px; }
+    .row { display:flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+
+    .dropzone {
+      display:grid; place-items:center; text-align:center; padding: 32px; border:2px dashed #cbd5e1; border-radius: var(--radius);
+      transition: border-color .2s, background .2s;
+      background: #f8fafc;
+    }
+    .dropzone.dragover { border-color: var(--brand); background: #f0f9ff; }
+
+    .btn { appearance:none; border:1px solid var(--brand); background: var(--brand); color:white; border-radius: 12px; padding: 10px 14px; font-weight:600; cursor:pointer; transition: transform .02s ease, box-shadow .2s, background .2s, border-color .2s; box-shadow: 0 6px 14px rgba(14,165,233,.25); }
+    .btn:hover { background: var(--brand-pressed); border-color: var(--brand-pressed); }
+    .btn:active { transform: translateY(1px); }
+    .btn.secondary { background: transparent; color: var(--brand); box-shadow:none; }
+    .btn.destructive { border-color: var(--err); color: white; background: var(--err); box-shadow: 0 6px 14px rgba(239,68,68,.2); }
+    .btn:disabled { opacity:.45; cursor:not-allowed; box-shadow:none; }
+
+    .hint { font-size: 13px; color: var(--muted); }
+
+    .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap:14px; margin-top: 18px; }
+    .card { background: white; border:1px solid var(--border); border-radius: 14px; overflow: clip; box-shadow: var(--shadow); display:flex; flex-direction:column; }
+    .thumb { aspect-ratio:1.4/1; display:grid; place-items:center; background:#f1f5f9; }
+    .thumb img { max-width:100%; max-height:100%; object-fit:contain; display:block; }
+    .meta { padding: 12px; display:grid; gap:10px; }
+    .meta .name { font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .meta .small { color: var(--muted); font-size: 12px; display:flex; gap:10px; align-items:center; }
+
+    .progress { height: 8px; background:#eef2f7; border-radius: 999px; overflow:hidden; }
+    .progress > span { display:block; height:100%; width:0; background: linear-gradient(90deg, var(--brand), #22c55e); transition: width .25s ease; }
+
+    footer { margin-top: 30px; color: var(--muted); font-size: 13px; text-align:center; }
+    .badge { display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius: 999px; background: #ecfeff; border:1px solid #a5f3fc; color: #155e75; font-weight: 600; font-size: 12px; }
+    .toolbar { display:flex; flex-wrap:wrap; gap:8px; justify-content: flex-end; margin-top: 12px; }
+    .pill { display:inline-flex; align-items:center; gap:6px; background:#eef2f7; border:1px solid var(--border); color:#0f172a; border-radius:999px; padding:8px 10px; font-size:13px; }
+    .pill b { font-variant-numeric: tabular-nums; font-weight:700; }
+
+    .hidden { display:none !important; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="10" fill="#0ea5e9"/><path fill="#fff" d="M12 16h24v4H12zm0 8h24v4H12zm0 8h24v4H12z"/></svg>
+        <div>
+          <h1>WEBP · AVIF → PNG 변환기</h1>
+          <div class="sub">모든 변환은 <b>브라우저 안</b>에서 실행됩니다. 파일은 서버로 <b>업로드되지 않습니다</b>.</div>
+        </div>
+      </div>
+      <span class="badge" title="Client-side only">🔒 로컬 변환 · No DB · No 서버 업로드</span>
+    </header>
+
+    <section class="panel" aria-label="업로드">
+      <div class="row" style="justify-content:space-between; align-items:flex-start; gap:18px;">
+        <div style="flex:1; min-width: 260px;">
+          <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="여기에 파일을 드래그 앤 드롭 하거나 클릭해서 선택">
+            <div>
+              <div style="font-weight:700; font-size:18px;">여기에 WEBP·AVIF 파일을 드롭</div>
+              <div class="hint" style="margin-top:6px;">또는</div>
+              <div style="margin-top:10px;"><button class="btn" id="pickBtn">파일 선택</button></div>
+              <div class="hint" style="margin-top:8px;">지원 확장자: .webp, .avif · 최대 수백 MB(브라우저/메모리 한계 내)</div>
+            </div>
+            <input id="fileInput" class="hidden" type="file" accept=".webp,.avif,image/webp,image/avif" multiple />
+          </div>
+          <div class="toolbar">
+            <button id="convertAllBtn" class="btn" disabled>전체 변환</button>
+            <button id="clearBtn" class="btn secondary" disabled>목록 비우기</button>
+          </div>
+        </div>
+        <div style="width: 320px; max-width: 100%;">
+          <div class="pill" title="출력 포맷">
+            출력 형식: <b>PNG</b>
+          </div>
+          <p class="hint" style="margin-top:10px; line-height:1.6;">
+            • 투명도(알파 채널) 보존<br/>
+            • 메타데이터(EXIF)는 PNG에 포함되지 않을 수 있습니다<br/>
+            • 매우 큰 이미지의 경우 메모리가 부족할 수 있습니다
+          </p>
+          <details>
+            <summary class="hint">브라우저 호환성</summary>
+            <p class="hint" style="margin-top:6px;">
+              최신 Chrome/Edge/Firefox/Safari에서 WEBP·AVIF 디코딩을 지원합니다. 지원하지 않는 브라우저에서는 로딩 오류가 표시됩니다.
+            </p>
+          </details>
+        </div>
+      </div>
+
+      <div id="grid" class="grid" aria-live="polite" aria-busy="false"></div>
+    </section>
+
+    <footer>
+      <p>© <span id="year"></span> WEBP·AVIF → PNG Converter. 오픈 소스(정적) 배포 가능. </p>
+    </footer>
+  </div>
+
+  <template id="cardTpl">
+    <article class="card" data-state="idle" aria-label="파일 카드">
+      <div class="thumb"><img alt="미리보기" loading="lazy"/></div>
+      <div class="meta">
+        <div class="name" title="파일명"></div>
+        <div class="small info"></div>
+        <div class="progress hidden" aria-hidden="true"><span></span></div>
+        <div class="row" style="justify-content:space-between;">
+          <button class="btn convertBtn">변환</button>
+          <a class="btn secondary dlBtn hidden" download>다운로드</a>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <script>
+    // ================================
+    // 유틸 (단순 포맷팅)
+    // ================================
+    const fmtBytes = (n) => {
+      if (!Number.isFinite(n)) return '-';
+      const units = ['B','KB','MB','GB'];
+      const i = Math.min(units.length - 1, Math.floor(Math.log2(Math.max(n,1)) / 10));
+      return (n / (1 << (i * 10))).toFixed(i ? 1 : 0) + ' ' + units[i];
+    };
+    const extOf = (name) => (name.split('.').pop() || '').toLowerCase();
+    const swapExtToPng = (name) => name.replace(/\.[^.]+$/, '') + '.png';
+
+    // ================================
+    // 상태 관리
+    // ================================
+    const state = {
+      items: [], // { id, file, url, outBlobUrl?, width?, height?, status: 'idle'|'processing'|'done'|'error', error? }
+    };
+
+    const el = (sel, root=document) => root.querySelector(sel);
+    const els = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+
+    const grid = el('#grid');
+    const dropzone = el('#dropzone');
+    const fileInput = el('#fileInput');
+    const pickBtn = el('#pickBtn');
+    const convertAllBtn = el('#convertAllBtn');
+    const clearBtn = el('#clearBtn');
+    el('#year').textContent = new Date().getFullYear();
+
+    // ================================
+    // 파일 추가 & 렌더
+    // ================================
+    function addFiles(files) {
+      const accepted = [];
+      for (const file of files) {
+        const t = (file.type || '').toLowerCase();
+        const e = extOf(file.name);
+        if (t.includes('image/webp') || t.includes('image/avif') || e === 'webp' || e === 'avif') {
+          accepted.push(file);
+        }
+      }
+      if (accepted.length === 0) {
+        alert('WEBP 또는 AVIF 파일만 선택하세요.');
+        return;
+      }
+      for (const file of accepted) {
+        const id = crypto.randomUUID();
+        const url = URL.createObjectURL(file);
+        const item = { id, file, url, status: 'idle' };
+        state.items.push(item);
+        renderCard(item);
+      }
+      updateToolbar();
+    }
+
+    function renderCard(item) {
+      const tpl = el('#cardTpl');
+      const node = tpl.content.firstElementChild.cloneNode(true);
+      node.dataset.id = item.id;
+      const img = el('img', node);
+      img.src = item.url;
+      img.addEventListener('error', () => {
+        setInfo(node, `미리보기 실패 · 브라우저가 ${extOf(item.file.name).toUpperCase()}를 지원하지 않을 수 있음`, 'error');
+      });
+      el('.name', node).textContent = item.file.name;
+      setInfo(node, `${(item.file.type||'image/*')} · ${fmtBytes(item.file.size)}`);
+      grid.appendChild(node);
+
+      // 버튼 핸들러
+      el('.convertBtn', node).addEventListener('click', () => convertOne(item.id));
+      el('.dlBtn', node).addEventListener('click', (e) => {
+        if (!item.outBlobUrl) e.preventDefault();
+      });
+    }
+
+    function setInfo(cardNode, text, tone='') {
+      const info = el('.info', cardNode);
+      info.textContent = text;
+      info.style.color = tone === 'error' ? 'var(--err)' : tone === 'ok' ? 'var(--ok)' : 'var(--muted)';
+    }
+
+    function setProgress(cardNode, pct){
+      const wrap = el('.progress', cardNode);
+      const bar = el('.progress > span', cardNode);
+      if (pct == null){ wrap.classList.add('hidden'); wrap.setAttribute('aria-hidden','true'); return; }
+      wrap.classList.remove('hidden'); wrap.setAttribute('aria-hidden','false');
+      bar.style.width = Math.max(0, Math.min(100, pct)) + '%';
+    }
+
+    function getCard(id){ return el(`.card[data-id="${id}"]`); }
+
+    function updateToolbar(){
+      const hasItems = state.items.length > 0;
+      const anyIdle = state.items.some(x => x.status === 'idle' || x.status === 'error');
+      convertAllBtn.disabled = !(hasItems && anyIdle);
+      clearBtn.disabled = !hasItems;
+    }
+
+    // ================================
+    // 변환 로직 (브라우저 디코딩 → Canvas → PNG Blob)
+    // ================================
+    async function decodeToCanvas(file) {
+      // 우선 createImageBitmap 시도 (빠름). 실패 시 <img> Fallback.
+      const url = URL.createObjectURL(file);
+      try {
+        let bmp;
+        try {
+          bmp = await createImageBitmap(file);
+        } catch (e) {
+          // 일부 Safari 등에서 createImageBitmap 미지원
+          bmp = await new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.onerror = () => reject(new Error('이미지 디코딩 실패 (브라우저에서 형식 미지원 가능)'));
+            img.src = url;
+          });
+        }
+        const w = bmp.width, h = bmp.height;
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(bmp, 0, 0);
+        // PNG는 무손실. toBlob 사용 (메모리 효율 ↑)
+        const blob = await new Promise((res, rej) => canvas.toBlob(b => b? res(b) : rej(new Error('PNG 생성 실패')), 'image/png'));
+        URL.revokeObjectURL(url);
+        return { blob, width: w, height: h };
+      } catch (err) {
+        URL.revokeObjectURL(url);
+        throw err;
+      }
+    }
+
+    async function convertOne(id){
+      const item = state.items.find(x => x.id === id);
+      const card = getCard(id);
+      if (!item || !card) return;
+      if (item.status === 'processing') return;
+
+      item.status = 'processing';
+      setProgress(card, 8);
+      setInfo(card, '디코딩 중…');
+      el('.convertBtn', card).disabled = true;
+
+      try {
+        const { blob, width, height } = await decodeToCanvas(item.file);
+        setProgress(card, 80);
+        const outUrl = URL.createObjectURL(blob);
+        item.outBlobUrl = outUrl;
+        item.width = width; item.height = height;
+
+        const dl = el('.dlBtn', card);
+        dl.classList.remove('hidden');
+        dl.href = outUrl;
+        dl.download = swapExtToPng(item.file.name);
+
+        setInfo(card, `PNG 생성 완료 · ${width}×${height} · ${fmtBytes(blob.size)}`, 'ok');
+        setProgress(card, 100);
+        item.status = 'done';
+      } catch (err) {
+        console.error(err);
+        setInfo(card, '변환 실패: ' + (err?.message || err), 'error');
+        item.status = 'error';
+        setProgress(card, null);
+        el('.convertBtn', card).disabled = false;
+      } finally {
+        updateToolbar();
+      }
+    }
+
+    async function convertAll(){
+      convertAllBtn.disabled = true;
+      for (const item of state.items) {
+        if (item.status === 'idle' || item.status === 'error') {
+          await convertOne(item.id);
+        }
+      }
+      updateToolbar();
+    }
+
+    function clearAll(){
+      // URL 해제
+      for (const it of state.items) {
+        try { if (it.url) URL.revokeObjectURL(it.url); } catch {}
+        try { if (it.outBlobUrl) URL.revokeObjectURL(it.outBlobUrl); } catch {}
+      }
+      state.items = [];
+      grid.innerHTML = '';
+      updateToolbar();
+    }
+
+    // ================================
+    // 이벤트 바인딩 (드래그 앤 드롭, 파일 선택)
+    // ================================
+    pickBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => addFiles(e.target.files));
+
+    ;['dragenter','dragover'].forEach(type => dropzone.addEventListener(type, (e)=>{
+      e.preventDefault(); e.stopPropagation(); dropzone.classList.add('dragover');
+    }));
+    ;['dragleave','drop'].forEach(type => dropzone.addEventListener(type, (e)=>{
+      e.preventDefault(); e.stopPropagation(); dropzone.classList.remove('dragover');
+    }));
+    dropzone.addEventListener('drop', (e)=>{
+      const dt = e.dataTransfer; if (!dt) return;
+      addFiles(dt.files);
+    });
+    dropzone.addEventListener('click', () => fileInput.click());
+
+    convertAllBtn.addEventListener('click', convertAll);
+    clearBtn.addEventListener('click', clearAll);
+
+    // 접근성: 키보드 포커스 시 스페이스/엔터를 클릭으로
+    dropzone.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
+    });
+
+    // 페이지 떠날 때 Blob URL 정리 (메모리 누수 방지)
+    window.addEventListener('beforeunload', () => {
+      for (const it of state.items) {
+        try { if (it.url) URL.revokeObjectURL(it.url); } catch {}
+        try { if (it.outBlobUrl) URL.revokeObjectURL(it.outBlobUrl); } catch {}
+      }
+    });
+  </script>
+</body>
+</html>
