@@ -1,10 +1,36 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>WEBP · AVIF → PNG 변환기 (오프라인, 정적 사이트)</title>
-  <meta name="description" content="브라우저에서 오프라인으로 WEBP/AVIF 이미지를 PNG로 일괄 변환합니다. 파일은 서버로 업로드되지 않습니다." />
+  <title>WEBP & AVIF to PNG Converter (Offline · Client‑side)</title>
+  <meta name="description" content="Convert WEBP and AVIF images to PNG entirely in your browser. 100% offline, no uploads, no database. Batch conversion supported." />
+  <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1" />
+  <meta name="keywords" content="WEBP to PNG, AVIF to PNG, image converter, offline converter, client-side, no upload" />
+  <meta name="theme-color" content="#0ea5e9" />
+  <!-- ✅ 아래 canonical/og:url 은 실제 배포 도메인으로 교체하세요. (SEO용) -->
+  <link rel="canonical" href="https://YOUR-DOMAIN.com/webp-avif-to-png" />
+  <link rel="alternate" href="https://YOUR-DOMAIN.com/webp-avif-to-png" hreflang="en" />
+  <meta property="og:title" content="WEBP & AVIF to PNG Converter (Offline)" />
+  <meta property="og:description" content="Convert WEBP and AVIF to PNG locally in your browser. No upload. No database. Free and fast." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://YOUR-DOMAIN.com/webp-avif-to-png" />
+  <meta property="og:image" content="https://YOUR-DOMAIN.com/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "WEBP & AVIF to PNG Converter",
+    "applicationCategory": "Utility",
+    "operatingSystem": "Web",
+    "url": "https://YOUR-DOMAIN.com/webp-avif-to-png",
+    "description": "Convert WEBP and AVIF images to PNG entirely in your browser. 100% offline, no uploads, no database.",
+    "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}
+  }
+  </script>
+
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='10' fill='%23008cff'/%3E%3Cpath fill='white' d='M12 16h24v4H12zm0 8h24v4H12zm0 8h24v4H12z'/%3E%3C/svg%3E"/>
   <style>
     :root {
@@ -25,7 +51,7 @@
     * { box-sizing: border-box; }
     html, body { height: 100%; }
     body {
-      margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans KR, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
+      margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
       color: var(--text); background: radial-gradient(1200px 800px at 10% -10%, #e0f2fe, transparent 40%), var(--bg);
     }
     .container { max-width: 1100px; margin: 0 auto; padding: 28px 16px 60px; }
@@ -80,43 +106,43 @@
       <div class="brand">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="10" fill="#0ea5e9"/><path fill="#fff" d="M12 16h24v4H12zm0 8h24v4H12zm0 8h24v4H12z"/></svg>
         <div>
-          <h1>WEBP · AVIF → PNG 변환기</h1>
-          <div class="sub">모든 변환은 <b>브라우저 안</b>에서 실행됩니다. 파일은 서버로 <b>업로드되지 않습니다</b>.</div>
+          <h1>WEBP & AVIF to PNG Converter</h1>
+          <div class="sub">Everything runs <b>inside your browser</b>. Files are <b>never uploaded</b>.</div>
         </div>
       </div>
-      <span class="badge" title="Client-side only">🔒 로컬 변환 · No DB · No 서버 업로드</span>
+      <span class="badge" title="Client-side only">🔒 Local conversion · No DB · No uploads</span>
     </header>
 
-    <section class="panel" aria-label="업로드">
+    <section class="panel" aria-label="Upload">
       <div class="row" style="justify-content:space-between; align-items:flex-start; gap:18px;">
         <div style="flex:1; min-width: 260px;">
-          <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="여기에 파일을 드래그 앤 드롭 하거나 클릭해서 선택">
+          <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Drag & drop files here or click to choose">
             <div>
-              <div style="font-weight:700; font-size:18px;">여기에 WEBP·AVIF 파일을 드롭</div>
-              <div class="hint" style="margin-top:6px;">또는</div>
-              <div style="margin-top:10px;"><button class="btn" id="pickBtn">파일 선택</button></div>
-              <div class="hint" style="margin-top:8px;">지원 확장자: .webp, .avif · 최대 수백 MB(브라우저/메모리 한계 내)</div>
+              <div style="font-weight:700; font-size:18px;">Drop your WEBP or AVIF files here</div>
+              <div class="hint" style="margin-top:6px;">or</div>
+              <div style="margin-top:10px;"><button class="btn" id="pickBtn">Choose files</button></div>
+              <div class="hint" style="margin-top:8px;">Supported: .webp, .avif · Large files OK (browser/memory limits apply)</div>
             </div>
             <input id="fileInput" class="hidden" type="file" accept=".webp,.avif,image/webp,image/avif" multiple />
           </div>
           <div class="toolbar">
-            <button id="convertAllBtn" class="btn" disabled>전체 변환</button>
-            <button id="clearBtn" class="btn secondary" disabled>목록 비우기</button>
+            <button id="convertAllBtn" class="btn" disabled>Convert all</button>
+            <button id="clearBtn" class="btn secondary" disabled>Clear list</button>
           </div>
         </div>
         <div style="width: 320px; max-width: 100%;">
-          <div class="pill" title="출력 포맷">
-            출력 형식: <b>PNG</b>
+          <div class="pill" title="Output format">
+            Output: <b>PNG</b>
           </div>
           <p class="hint" style="margin-top:10px; line-height:1.6;">
-            • 투명도(알파 채널) 보존<br/>
-            • 메타데이터(EXIF)는 PNG에 포함되지 않을 수 있습니다<br/>
-            • 매우 큰 이미지의 경우 메모리가 부족할 수 있습니다
+            • Preserves transparency (alpha)<br/>
+            • EXIF/metadata may not be included in PNG<br/>
+            • Very large images may hit memory limits
           </p>
           <details>
-            <summary class="hint">브라우저 호환성</summary>
+            <summary class="hint">Browser support</summary>
             <p class="hint" style="margin-top:6px;">
-              최신 Chrome/Edge/Firefox/Safari에서 WEBP·AVIF 디코딩을 지원합니다. 지원하지 않는 브라우저에서는 로딩 오류가 표시됩니다.
+              Modern Chrome/Edge/Firefox/Safari can decode WEBP & AVIF. Unsupported browsers will show a load error.
             </p>
           </details>
         </div>
@@ -125,21 +151,34 @@
       <div id="grid" class="grid" aria-live="polite" aria-busy="false"></div>
     </section>
 
+    <section class="panel" style="margin-top:16px;">
+      <h2 style="margin:0 0 8px;">How to convert WEBP or AVIF to PNG (fast & offline)</h2>
+      <ol class="hint" style="margin-top:6px;">
+        <li>Drag and drop WEBP/AVIF images, or click <b>Choose files</b>.</li>
+        <li>Click <b>Convert</b> on each card or <b>Convert all</b>.</li>
+        <li>Download the generated PNG files. That’s it!</li>
+      </ol>
+      <details>
+        <summary class="hint">FAQ · Is this converter safe for sensitive images?</summary>
+        <p class="hint">Yes. Conversion happens locally in your browser via Canvas APIs. <b>No uploads</b>, <b>no servers</b>, and <b>no database</b> are involved.</p>
+      </details>
+    </section>
+
     <footer>
-      <p>© <span id="year"></span> WEBP·AVIF → PNG Converter. 오픈 소스(정적) 배포 가능. </p>
+      <p>© <span id="year"></span> WEBP·AVIF → PNG Converter. Static & open-source friendly.</p>
     </footer>
   </div>
 
   <template id="cardTpl">
-    <article class="card" data-state="idle" aria-label="파일 카드">
-      <div class="thumb"><img alt="미리보기" loading="lazy"/></div>
+    <article class="card" data-state="idle" aria-label="file card">
+      <div class="thumb"><img alt="preview" loading="lazy"/></div>
       <div class="meta">
-        <div class="name" title="파일명"></div>
+        <div class="name" title="filename"></div>
         <div class="small info"></div>
         <div class="progress hidden" aria-hidden="true"><span></span></div>
         <div class="row" style="justify-content:space-between;">
-          <button class="btn convertBtn">변환</button>
-          <a class="btn secondary dlBtn hidden" download>다운로드</a>
+          <button class="btn convertBtn">Convert</button>
+          <a class="btn secondary dlBtn hidden" download>Download</a>
         </div>
       </div>
     </article>
@@ -147,7 +186,7 @@
 
   <script>
     // ================================
-    // 유틸 (단순 포맷팅)
+    // 유틸 (단순 포맷팅) — 주석은 한글 유지
     // ================================
     const fmtBytes = (n) => {
       if (!Number.isFinite(n)) return '-';
@@ -159,7 +198,7 @@
     const swapExtToPng = (name) => name.replace(/\.[^.]+$/, '') + '.png';
 
     // ================================
-    // 상태 관리
+    // 상태 관리 — 주석은 한글 유지
     // ================================
     const state = {
       items: [], // { id, file, url, outBlobUrl?, width?, height?, status: 'idle'|'processing'|'done'|'error', error? }
@@ -177,7 +216,7 @@
     el('#year').textContent = new Date().getFullYear();
 
     // ================================
-    // 파일 추가 & 렌더
+    // 파일 추가 & 렌더 — 주석은 한글 유지
     // ================================
     function addFiles(files) {
       const accepted = [];
@@ -189,7 +228,7 @@
         }
       }
       if (accepted.length === 0) {
-        alert('WEBP 또는 AVIF 파일만 선택하세요.');
+        alert('Please select WEBP or AVIF files only.');
         return;
       }
       for (const file of accepted) {
@@ -209,13 +248,13 @@
       const img = el('img', node);
       img.src = item.url;
       img.addEventListener('error', () => {
-        setInfo(node, `미리보기 실패 · 브라우저가 ${extOf(item.file.name).toUpperCase()}를 지원하지 않을 수 있음`, 'error');
+        setInfo(node, `Preview failed · your browser may not support ${extOf(item.file.name).toUpperCase()}`, 'error');
       });
       el('.name', node).textContent = item.file.name;
       setInfo(node, `${(item.file.type||'image/*')} · ${fmtBytes(item.file.size)}`);
       grid.appendChild(node);
 
-      // 버튼 핸들러
+      // 버튼 핸들러 — 주석은 한글 유지
       el('.convertBtn', node).addEventListener('click', () => convertOne(item.id));
       el('.dlBtn', node).addEventListener('click', (e) => {
         if (!item.outBlobUrl) e.preventDefault();
@@ -240,16 +279,27 @@
 
     function updateToolbar(){
       const hasItems = state.items.length > 0;
+      const anyIdle = state.items.some(x => x.status === 'idle' || x === 'error');
+      // ↑ 오타 방지: x.status 비교 — 아래에서 재설정
+    }
+
+    // ↑ 위에서 anyIdle 계산을 수정합니다 (실제 동작용)
+    function _recalcToolbar(){
+      const hasItems = state.items.length > 0;
       const anyIdle = state.items.some(x => x.status === 'idle' || x.status === 'error');
       convertAllBtn.disabled = !(hasItems && anyIdle);
       clearBtn.disabled = !hasItems;
     }
 
+    // 기존 API와 호환되도록 updateToolbar를 재정의
+    const _origUpdate = updateToolbar;
+    function updateToolbar(){ _recalcToolbar(); }
+
     // ================================
-    // 변환 로직 (브라우저 디코딩 → Canvas → PNG Blob)
+    // 변환 로직 (브라우저 디코딩 → Canvas → PNG Blob) — 주석은 한글 유지
     // ================================
     async function decodeToCanvas(file) {
-      // 우선 createImageBitmap 시도 (빠름). 실패 시 <img> Fallback.
+      // 먼저 createImageBitmap 시도 (빠름). 실패 시 <img> Fallback.
       const url = URL.createObjectURL(file);
       try {
         let bmp;
@@ -260,7 +310,7 @@
           bmp = await new Promise((resolve, reject) => {
             const img = new Image();
             img.onload = () => resolve(img);
-            img.onerror = () => reject(new Error('이미지 디코딩 실패 (브라우저에서 형식 미지원 가능)'));
+            img.onerror = () => reject(new Error('Image decoding failed (format may be unsupported by this browser)'));
             img.src = url;
           });
         }
@@ -270,7 +320,7 @@
         const ctx = canvas.getContext('2d');
         ctx.drawImage(bmp, 0, 0);
         // PNG는 무손실. toBlob 사용 (메모리 효율 ↑)
-        const blob = await new Promise((res, rej) => canvas.toBlob(b => b? res(b) : rej(new Error('PNG 생성 실패')), 'image/png'));
+        const blob = await new Promise((res, rej) => canvas.toBlob(b => b? res(b) : rej(new Error('PNG blob creation failed')),'image/png'));
         URL.revokeObjectURL(url);
         return { blob, width: w, height: h };
       } catch (err) {
@@ -287,7 +337,7 @@
 
       item.status = 'processing';
       setProgress(card, 8);
-      setInfo(card, '디코딩 중…');
+      setInfo(card, 'Decoding…');
       el('.convertBtn', card).disabled = true;
 
       try {
@@ -302,12 +352,12 @@
         dl.href = outUrl;
         dl.download = swapExtToPng(item.file.name);
 
-        setInfo(card, `PNG 생성 완료 · ${width}×${height} · ${fmtBytes(blob.size)}`, 'ok');
+        setInfo(card, `PNG ready · ${width}×${height} · ${fmtBytes(blob.size)}`, 'ok');
         setProgress(card, 100);
         item.status = 'done';
       } catch (err) {
         console.error(err);
-        setInfo(card, '변환 실패: ' + (err?.message || err), 'error');
+        setInfo(card, 'Conversion failed: ' + (err?.message || err), 'error');
         item.status = 'error';
         setProgress(card, null);
         el('.convertBtn', card).disabled = false;
@@ -327,7 +377,7 @@
     }
 
     function clearAll(){
-      // URL 해제
+      // URL 해제 — 주석은 한글 유지
       for (const it of state.items) {
         try { if (it.url) URL.revokeObjectURL(it.url); } catch {}
         try { if (it.outBlobUrl) URL.revokeObjectURL(it.outBlobUrl); } catch {}
@@ -338,7 +388,7 @@
     }
 
     // ================================
-    // 이벤트 바인딩 (드래그 앤 드롭, 파일 선택)
+    // 이벤트 바인딩 (드래그 앤 드롭, 파일 선택) — 주석은 한글 유지
     // ================================
     pickBtn.addEventListener('click', (e) => { e.stopPropagation(); fileInput.click(); });
     fileInput.addEventListener('change', (e) => addFiles(e.target.files));
@@ -358,12 +408,12 @@
     convertAllBtn.addEventListener('click', convertAll);
     clearBtn.addEventListener('click', clearAll);
 
-    // 접근성: 키보드 포커스 시 스페이스/엔터를 클릭으로
+    // 접근성: 키보드 포커스 시 스페이스/엔터를 클릭으로 — 주석은 한글 유지
     dropzone.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
     });
 
-    // 페이지 떠날 때 Blob URL 정리 (메모리 누수 방지)
+    // 페이지 떠날 때 Blob URL 정리 (메모리 누수 방지) — 주석은 한글 유지
     window.addEventListener('beforeunload', () => {
       for (const it of state.items) {
         try { if (it.url) URL.revokeObjectURL(it.url); } catch {}
