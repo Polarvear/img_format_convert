@@ -3,12 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>WEBP & AVIF to PNG Converter (Offline · Client‑side)</title>
+  <title>WEBP & AVIF to PNG Converter (Offline · Client-side)</title>
   <meta name="description" content="Convert WEBP and AVIF images to PNG entirely in your browser. 100% offline, no uploads, no database. Batch conversion supported." />
   <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1" />
   <meta name="keywords" content="WEBP to PNG, AVIF to PNG, image converter, offline converter, client-side, no upload" />
   <meta name="theme-color" content="#0ea5e9" />
-  <!-- ✅ 아래 canonical/og:url 은 실제 배포 도메인으로 교체하세요. (SEO용) -->
   <link rel="canonical" href="https://convertimgs.com/webp-avif-to-png" />
   <link rel="alternate" href="https://convertimgs.com/webp-avif-to-png" hreflang="en" />
   <meta property="og:title" content="WEBP & AVIF to PNG Converter (Offline)" />
@@ -17,8 +16,11 @@
   <meta property="og:url" content="https://convertimgs.com/webp-avif-to-png" />
   <meta property="og:image" content="https://convertimgs.com/og-image.png" />
   <meta name="twitter:card" content="summary_large_image" />
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7717686478398902"
-  crossorigin="anonymous"></script>
+
+  <!-- ❌ 초기 로드에서 Auto Ads 스크립트 제거 -->
+  <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7717686478398902" crossorigin="anonymous"></script> -->
+
+  <!-- WebApplication + (아래에 HowTo/FAQ JSON-LD 추가) -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -26,61 +28,78 @@
     "name": "WEBP & AVIF to PNG Converter",
     "applicationCategory": "Utility",
     "operatingSystem": "Web",
-    "url": "https://img-format-convert.pages.dev/webp-avif-to-png",
+    "url": "https://convertimgs.com/webp-avif-to-png",
     "description": "Convert WEBP and AVIF images to PNG entirely in your browser. 100% offline, no uploads, no database.",
     "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}
+  }
+  </script>
+
+  <!-- HowTo 구조화 데이터(콘텐츠 신호 강화) -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"HowTo",
+    "name":"How to convert WEBP or AVIF to PNG in your browser",
+    "description":"A quick guide to convert WEBP/AVIF images to PNG fully offline in the browser.",
+    "image":"https://convertimgs.com/og-image.png",
+    "step":[
+      {"@type":"HowToStep","name":"Add files","text":"Drag & drop WEBP/AVIF images or click Choose files."},
+      {"@type":"HowToStep","name":"Convert","text":"Click Convert on each card or Convert all."},
+      {"@type":"HowToStep","name":"Download","text":"Download the generated PNG files to your device."}
+    ]
+  }
+  </script>
+
+  <!-- FAQ 구조화 데이터(선택적) -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {
+        "@type":"Question",
+        "name":"Are my images uploaded to a server?",
+        "acceptedAnswer":{"@type":"Answer","text":"No. All conversions run locally in your browser via Canvas. No uploads or servers involved."}
+      },
+      {
+        "@type":"Question",
+        "name":"Does it preserve transparency?",
+        "acceptedAnswer":{"@type":"Answer","text":"Yes. PNG output preserves alpha transparency."}
+      }
+    ]
   }
   </script>
 
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='10' fill='%23008cff'/%3E%3Cpath fill='white' d='M12 16h24v4H12zm0 8h24v4H12zm0 8h24v4H12z'/%3E%3C/svg%3E"/>
   <style>
     :root {
-      --bg: #f7f8fb;
-      --card: #ffffff;
-      --border: #e5e7eb;
-      --text: #0f172a;
-      --muted: #64748b;
-      --brand: #0ea5e9;
-      --brand-pressed: #0284c7;
-      --ring: rgba(14,165,233,.35);
-      --ok: #16a34a;
-      --warn: #eab308;
-      --err: #ef4444;
-      --radius: 16px;
+      --bg: #f7f8fb; --card: #ffffff; --border: #e5e7eb; --text: #0f172a; --muted: #64748b;
+      --brand: #0ea5e9; --brand-pressed: #0284c7; --ring: rgba(14,165,233,.35);
+      --ok: #16a34a; --warn: #eab308; --err: #ef4444; --radius: 16px;
       --shadow: 0 10px 25px rgba(2,6,23,.06), 0 2px 6px rgba(2,6,23,.08);
     }
     * { box-sizing: border-box; }
     html, body { height: 100%; }
-    body {
-      margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
-      color: var(--text); background: radial-gradient(1200px 800px at 10% -10%, #e0f2fe, transparent 40%), var(--bg);
-    }
+    body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
+      color: var(--text); background: radial-gradient(1200px 800px at 10% -10%, #e0f2fe, transparent 40%), var(--bg); }
     .container { max-width: 1100px; margin: 0 auto; padding: 28px 16px 60px; }
     header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: 18px; }
     .brand { display:flex; gap:12px; align-items:center; }
     .brand svg { width:34px; height:34px; }
     .brand h1 { font-size: clamp(20px, 3vw, 28px); margin:0; letter-spacing: -.02em; }
     .sub { color: var(--muted); font-size: 14px; margin-top:4px; }
-
     .panel { background: var(--card); border:1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px; }
     .row { display:flex; flex-wrap: wrap; gap: 14px; align-items: center; }
-
-    .dropzone {
-      display:grid; place-items:center; text-align:center; padding: 32px; border:2px dashed #cbd5e1; border-radius: var(--radius);
-      transition: border-color .2s, background .2s;
-      background: #f8fafc;
-    }
+    .dropzone { display:grid; place-items:center; text-align:center; padding: 32px; border:2px dashed #cbd5e1; border-radius: var(--radius);
+      transition: border-color .2s, background .2s; background: #f8fafc; }
     .dropzone.dragover { border-color: var(--brand); background: #f0f9ff; }
-
     .btn { appearance:none; border:1px solid var(--brand); background: var(--brand); color:white; border-radius: 12px; padding: 10px 14px; font-weight:600; cursor:pointer; transition: transform .02s ease, box-shadow .2s, background .2s, border-color .2s; box-shadow: 0 6px 14px rgba(14,165,233,.25); }
     .btn:hover { background: var(--brand-pressed); border-color: var(--brand-pressed); }
     .btn:active { transform: translateY(1px); }
     .btn.secondary { background: transparent; color: var(--brand); box-shadow:none; }
     .btn.destructive { border-color: var(--err); color: white; background: var(--err); box-shadow: 0 6px 14px rgba(239,68,68,.2); }
     .btn:disabled { opacity:.45; cursor:not-allowed; box-shadow:none; }
-
     .hint { font-size: 13px; color: var(--muted); }
-
     .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap:14px; margin-top: 18px; }
     .card { background: white; border:1px solid var(--border); border-radius: 14px; overflow: clip; box-shadow: var(--shadow); display:flex; flex-direction:column; }
     .thumb { aspect-ratio:1.4/1; display:grid; place-items:center; background:#f1f5f9; }
@@ -88,17 +107,18 @@
     .meta { padding: 12px; display:grid; gap:10px; }
     .meta .name { font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .meta .small { color: var(--muted); font-size: 12px; display:flex; gap:10px; align-items:center; }
-
     .progress { height: 8px; background:#eef2f7; border-radius: 999px; overflow:hidden; }
     .progress > span { display:block; height:100%; width:0; background: linear-gradient(90deg, var(--brand), #22c55e); transition: width .25s ease; }
-
     footer { margin-top: 30px; color: var(--muted); font-size: 13px; text-align:center; }
     .badge { display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius: 999px; background: #ecfeff; border:1px solid #a5f3fc; color: #155e75; font-weight: 600; font-size: 12px; }
     .toolbar { display:flex; flex-wrap:wrap; gap:8px; justify-content: flex-end; margin-top: 12px; }
     .pill { display:inline-flex; align-items:center; gap:6px; background:#eef2f7; border:1px solid var(--border); color:#0f172a; border-radius:999px; padding:8px 10px; font-size:13px; }
     .pill b { font-variant-numeric: tabular-nums; font-weight:700; }
-
     .hidden { display:none !important; }
+
+    /* 광고 컨테이너(결과 하단 전용) */
+    .ad-wrap { margin-top: 18px; display:none; }
+    .ad-wrap.active { display:block; }
   </style>
 </head>
 <body>
@@ -111,7 +131,6 @@
           <div class="sub">Everything runs <b>inside your browser</b>. Files are <b>never uploaded</b>.</div>
         </div>
       </div>
-      <!-- <span class="badge" title="Client-side only">🔒 Local conversion · No DB · No uploads</span> -->
     </header>
 
     <section class="panel" aria-label="Upload">
@@ -132,9 +151,7 @@
           </div>
         </div>
         <div style="width: 320px; max-width: 100%;">
-          <div class="pill" title="Output format">
-            Output: <b>PNG</b>
-          </div>
+          <div class="pill" title="Output format">Output: <b>PNG</b></div>
           <p class="hint" style="margin-top:10px; line-height:1.6;">
             • Preserves transparency (alpha)<br/>
             • EXIF/metadata may not be included in PNG<br/>
@@ -150,6 +167,9 @@
       </div>
 
       <div id="grid" class="grid" aria-live="polite" aria-busy="false"></div>
+
+      <!-- ✅ 광고는 결과(카드)가 생긴 후에만 로드되는 “지연 슬롯” -->
+      <div id="ad-after-grid" class="ad-wrap" aria-label="Advertisement"></div>
     </section>
 
     <section class="panel" style="margin-top:16px;">
@@ -162,6 +182,10 @@
       <details>
         <summary class="hint">FAQ · Is this converter safe for sensitive images?</summary>
         <p class="hint">Yes. Conversion happens locally in your browser via Canvas APIs. <b>No uploads</b>, <b>no servers</b>, and <b>no database</b> are involved.</p>
+      </details>
+      <details>
+        <summary class="hint">Tips</summary>
+        <p class="hint">If an image fails to preview, your browser may not support the format. Try the latest Chrome/Edge/Firefox/Safari.</p>
       </details>
     </section>
 
@@ -187,7 +211,7 @@
 
   <script>
     // ================================
-    // 유틸 (단순 포맷팅) — 주석은 한글 유지
+    // 유틸
     // ================================
     const fmtBytes = (n) => {
       if (!Number.isFinite(n)) return '-';
@@ -199,15 +223,10 @@
     const swapExtToPng = (name) => name.replace(/\.[^.]+$/, '') + '.png';
 
     // ================================
-    // 상태 관리 — 주석은 한글 유지
+    // 상태 관리
     // ================================
-    const state = {
-      items: [], // { id, file, url, outBlobUrl?, width?, height?, status: 'idle'|'processing'|'done'|'error', error? }
-    };
-
+    const state = { items: [] }; // { id, file, url, outBlobUrl?, width?, height?, status }
     const el = (sel, root=document) => root.querySelector(sel);
-    const els = (sel, root=document) => Array.from(root.querySelectorAll(sel));
-
     const grid = el('#grid');
     const dropzone = el('#dropzone');
     const fileInput = el('#fileInput');
@@ -217,7 +236,41 @@
     el('#year').textContent = new Date().getFullYear();
 
     // ================================
-    // 파일 추가 & 렌더 — 주석은 한글 유지
+    // 🔐 AdSense 지연 로드 매니저
+    // ================================
+    let adsInitialized = false;
+    function ensureAdsAfterContent(){
+      // 파일 카드가 최소 1개 이상 생성된 뒤에만 광고 스크립트 로드
+      if (adsInitialized) return;
+      if (state.items.length === 0) return;
+
+      adsInitialized = true;
+
+      // 1) AdSense 스크립트 주입 (Auto Ads 사용 X, 수동 슬롯만)
+      const s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7717686478398902';
+      s.crossOrigin = 'anonymous';
+      s.onload = () => {
+        // 2) 수동 디스플레이 슬롯 생성 (반응형)
+        const wrap = el('#ad-after-grid');
+        const ins = document.createElement('ins');
+        ins.className = 'adsbygoogle';
+        ins.style.display = 'block';
+        ins.setAttribute('data-ad-client', 'ca-pub-7717686478398902');
+        ins.setAttribute('data-ad-slot', 'f08c47fec0942fa0'); // ← 실제 슬롯 ID로 교체
+        ins.setAttribute('data-ad-format', 'auto');
+        ins.setAttribute('data-full-width-responsive', 'true');
+        wrap.appendChild(ins);
+
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+        wrap.classList.add('active'); // 시각적으로 표시
+      };
+      document.head.appendChild(s);
+    }
+
+    // ================================
+    // 파일 추가 & 렌더
     // ================================
     function addFiles(files) {
       const accepted = [];
@@ -232,82 +285,74 @@
         alert('Please select WEBP or AVIF files only.');
         return;
       }
+      const wasEmpty = state.items.length === 0;
       for (const file of accepted) {
-        const id = crypto.randomUUID();
+        const id = (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2));
         const url = URL.createObjectURL(file);
         const item = { id, file, url, status: 'idle' };
         state.items.push(item);
         renderCard(item);
       }
       updateToolbar();
+
+      // ✅ 최초 콘텐츠 생성 시점에만 광고 초기화
+      if (wasEmpty && state.items.length > 0) {
+        ensureAdsAfterContent();
+      }
     }
 
     function renderCard(item) {
-      const tpl = el('#cardTpl');
+      const tpl = document.getElementById('cardTpl');
       const node = tpl.content.firstElementChild.cloneNode(true);
       node.dataset.id = item.id;
-      const img = el('img', node);
+      const img = node.querySelector('img');
       img.src = item.url;
       img.addEventListener('error', () => {
         setInfo(node, `Preview failed · your browser may not support ${extOf(item.file.name).toUpperCase()}`, 'error');
       });
-      el('.name', node).textContent = item.file.name;
+      node.querySelector('.name').textContent = item.file.name;
       setInfo(node, `${(item.file.type||'image/*')} · ${fmtBytes(item.file.size)}`);
       grid.appendChild(node);
 
-      // 버튼 핸들러 — 주석은 한글 유지
-      el('.convertBtn', node).addEventListener('click', () => convertOne(item.id));
-      el('.dlBtn', node).addEventListener('click', (e) => {
+      node.querySelector('.convertBtn').addEventListener('click', () => convertOne(item.id));
+      node.querySelector('.dlBtn').addEventListener('click', (e) => {
         if (!item.outBlobUrl) e.preventDefault();
       });
     }
 
     function setInfo(cardNode, text, tone='') {
-      const info = el('.info', cardNode);
+      const info = cardNode.querySelector('.info');
       info.textContent = text;
       info.style.color = tone === 'error' ? 'var(--err)' : tone === 'ok' ? 'var(--ok)' : 'var(--muted)';
     }
 
     function setProgress(cardNode, pct){
-      const wrap = el('.progress', cardNode);
-      const bar = el('.progress > span', cardNode);
+      const wrap = cardNode.querySelector('.progress');
+      const bar = cardNode.querySelector('.progress > span');
       if (pct == null){ wrap.classList.add('hidden'); wrap.setAttribute('aria-hidden','true'); return; }
       wrap.classList.remove('hidden'); wrap.setAttribute('aria-hidden','false');
       bar.style.width = Math.max(0, Math.min(100, pct)) + '%';
     }
 
-    function getCard(id){ return el(`.card[data-id="${id}"]`); }
+    function getCard(id){ return document.querySelector(`.card[data-id="${id}"]`); }
 
-    function updateToolbar(){
-      const hasItems = state.items.length > 0;
-      const anyIdle = state.items.some(x => x.status === 'idle' || x === 'error');
-      // ↑ 오타 방지: x.status 비교 — 아래에서 재설정
-    }
-
-    // ↑ 위에서 anyIdle 계산을 수정합니다 (실제 동작용)
     function _recalcToolbar(){
       const hasItems = state.items.length > 0;
       const anyIdle = state.items.some(x => x.status === 'idle' || x.status === 'error');
       convertAllBtn.disabled = !(hasItems && anyIdle);
       clearBtn.disabled = !hasItems;
     }
-
-    // 기존 API와 호환되도록 updateToolbar를 재정의
-    const _origUpdate = updateToolbar;
     function updateToolbar(){ _recalcToolbar(); }
 
     // ================================
-    // 변환 로직 (브라우저 디코딩 → Canvas → PNG Blob) — 주석은 한글 유지
+    // 변환 로직
     // ================================
     async function decodeToCanvas(file) {
-      // 먼저 createImageBitmap 시도 (빠름). 실패 시 <img> Fallback.
       const url = URL.createObjectURL(file);
       try {
         let bmp;
-        try {
-          bmp = await createImageBitmap(file);
-        } catch (e) {
-          // 일부 Safari 등에서 createImageBitmap 미지원
+        try { bmp = await createImageBitmap(file); }
+        catch (e) {
           bmp = await new Promise((resolve, reject) => {
             const img = new Image();
             img.onload = () => resolve(img);
@@ -320,7 +365,6 @@
         canvas.width = w; canvas.height = h;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(bmp, 0, 0);
-        // PNG는 무손실. toBlob 사용 (메모리 효율 ↑)
         const blob = await new Promise((res, rej) => canvas.toBlob(b => b? res(b) : rej(new Error('PNG blob creation failed')),'image/png'));
         URL.revokeObjectURL(url);
         return { blob, width: w, height: h };
@@ -339,7 +383,7 @@
       item.status = 'processing';
       setProgress(card, 8);
       setInfo(card, 'Decoding…');
-      el('.convertBtn', card).disabled = true;
+      card.querySelector('.convertBtn').disabled = true;
 
       try {
         const { blob, width, height } = await decodeToCanvas(item.file);
@@ -348,7 +392,7 @@
         item.outBlobUrl = outUrl;
         item.width = width; item.height = height;
 
-        const dl = el('.dlBtn', card);
+        const dl = card.querySelector('.dlBtn');
         dl.classList.remove('hidden');
         dl.href = outUrl;
         dl.download = swapExtToPng(item.file.name);
@@ -361,7 +405,7 @@
         setInfo(card, 'Conversion failed: ' + (err?.message || err), 'error');
         item.status = 'error';
         setProgress(card, null);
-        el('.convertBtn', card).disabled = false;
+        card.querySelector('.convertBtn').disabled = false;
       } finally {
         updateToolbar();
       }
@@ -378,43 +422,44 @@
     }
 
     function clearAll(){
-      // URL 해제 — 주석은 한글 유지
       for (const it of state.items) {
         try { if (it.url) URL.revokeObjectURL(it.url); } catch {}
         try { if (it.outBlobUrl) URL.revokeObjectURL(it.outBlobUrl); } catch {}
       }
       state.items = [];
       grid.innerHTML = '';
+
+      // ⚠️ 콘텐츠가 다시 '빈 상태'가 되었으니 광고 컨테이너를 숨김
+      const wrap = el('#ad-after-grid');
+      wrap.classList.remove('active');
+      wrap.innerHTML = '';
+
       updateToolbar();
+      adsInitialized = false; // 재진입 시점에서만 다시 로드
     }
 
     // ================================
-    // 이벤트 바인딩 (드래그 앤 드롭, 파일 선택) — 주석은 한글 유지
+    // 이벤트 바인딩
     // ================================
     pickBtn.addEventListener('click', (e) => { e.stopPropagation(); fileInput.click(); });
     fileInput.addEventListener('change', (e) => addFiles(e.target.files));
 
-    ;['dragenter','dragover'].forEach(type => dropzone.addEventListener(type, (e)=>{
+    ['dragenter','dragover'].forEach(type => dropzone.addEventListener(type, (e)=>{
       e.preventDefault(); e.stopPropagation(); dropzone.classList.add('dragover');
     }));
-    ;['dragleave','drop'].forEach(type => dropzone.addEventListener(type, (e)=>{
+    ['dragleave','drop'].forEach(type => dropzone.addEventListener(type, (e)=>{
       e.preventDefault(); e.stopPropagation(); dropzone.classList.remove('dragover');
     }));
-    dropzone.addEventListener('drop', (e)=>{
-      const dt = e.dataTransfer; if (!dt) return;
-      addFiles(dt.files);
-    });
+    dropzone.addEventListener('drop', (e)=>{ const dt = e.dataTransfer; if (!dt) return; addFiles(dt.files); });
     dropzone.addEventListener('click', () => fileInput.click());
 
     convertAllBtn.addEventListener('click', convertAll);
     clearBtn.addEventListener('click', clearAll);
 
-    // 접근성: 키보드 포커스 시 스페이스/엔터를 클릭으로 — 주석은 한글 유지
     dropzone.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
     });
 
-    // 페이지 떠날 때 Blob URL 정리 (메모리 누수 방지) — 주석은 한글 유지
     window.addEventListener('beforeunload', () => {
       for (const it of state.items) {
         try { if (it.url) URL.revokeObjectURL(it.url); } catch {}
