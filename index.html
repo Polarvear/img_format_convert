@@ -17,10 +17,44 @@
   <meta property="og:image" content="https://convertimgs.com/og-image.png" />
   <meta name="twitter:card" content="summary_large_image" />
 
-  <!-- ❌ 초기 로드에서 Auto Ads 스크립트 제거 -->
-  <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7717686478398902" crossorigin="anonymous"></script> -->
+  <!-- ✅ Consent Mode v2 (기본 '거부' 상태) -->
+  <script>
+    // 동의 전에는 전부 'denied'
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('consent', 'default', {
+      'ad_user_data': 'denied',
+      'ad_personalization': 'denied',
+      'ad_storage': 'denied',
+      'analytics_storage': 'denied',
+      'functionality_storage': 'granted',
+      'security_storage': 'granted'
+    });
+    // 동의 후 업데이트 함수
+    window.__acceptAdsConsent = function(){
+      gtag('consent', 'update', {
+        'ad_user_data': 'granted',
+        'ad_personalization': 'granted',
+        'ad_storage': 'granted',
+        'analytics_storage': 'granted'
+      });
+      // 동의 후에만 광고 스크립트/슬롯 로드
+      if (window.__loadAdsOnce) return;
+      window.__loadAdsOnce = true;
+      const s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7717686478398902';
+      s.crossOrigin = 'anonymous';
+      s.onload = ()=>{ window.__adsReady = true; tryEnsureAdsAfterContent(); };
+      document.head.appendChild(s);
+    };
+    window.__rejectAdsConsent = function(){
+      // 유지: denied (아무 것도 안 함)
+      document.getElementById('consent-banner').remove();
+    };
+  </script>
 
-  <!-- WebApplication + (아래에 HowTo/FAQ JSON-LD 추가) -->
+  <!-- 구조화 데이터 (WebApplication + HowTo + FAQ) -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -30,11 +64,9 @@
     "operatingSystem": "Web",
     "url": "https://convertimgs.com/webp-avif-to-png",
     "description": "Convert WEBP and AVIF images to PNG entirely in your browser. 100% offline, no uploads, no database.",
-    "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}
+    "offers": {"@type":"Offer","price":"0","priceCurrency":"USD"}
   }
   </script>
-
-  <!-- HowTo 구조화 데이터(콘텐츠 신호 강화) -->
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
@@ -49,76 +81,61 @@
     ]
   }
   </script>
-
-  <!-- FAQ 구조화 데이터(선택적) -->
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
     "@type":"FAQPage",
     "mainEntity":[
-      {
-        "@type":"Question",
-        "name":"Are my images uploaded to a server?",
-        "acceptedAnswer":{"@type":"Answer","text":"No. All conversions run locally in your browser via Canvas. No uploads or servers involved."}
-      },
-      {
-        "@type":"Question",
-        "name":"Does it preserve transparency?",
-        "acceptedAnswer":{"@type":"Answer","text":"Yes. PNG output preserves alpha transparency."}
-      }
+      {"@type":"Question","name":"Are my images uploaded to a server?","acceptedAnswer":{"@type":"Answer","text":"No. All conversions run locally in your browser via Canvas. No uploads or servers involved."}},
+      {"@type":"Question","name":"Does it preserve transparency?","acceptedAnswer":{"@type":"Answer","text":"Yes. PNG output preserves alpha transparency."}},
+      {"@type":"Question","name":"Is there a file size limit?","acceptedAnswer":{"@type":"Answer","text":"It depends on your browser and device memory. Very large images may fail due to memory limits."}}
     ]
   }
   </script>
 
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='10' fill='%23008cff'/%3E%3Cpath fill='white' d='M12 16h24v4H12zm0 8h24v4H12zm0 8h24v4H12z'/%3E%3C/svg%3E"/>
   <style>
-    :root {
-      --bg: #f7f8fb; --card: #ffffff; --border: #e5e7eb; --text: #0f172a; --muted: #64748b;
-      --brand: #0ea5e9; --brand-pressed: #0284c7; --ring: rgba(14,165,233,.35);
-      --ok: #16a34a; --warn: #eab308; --err: #ef4444; --radius: 16px;
-      --shadow: 0 10px 25px rgba(2,6,23,.06), 0 2px 6px rgba(2,6,23,.08);
-    }
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
-      color: var(--text); background: radial-gradient(1200px 800px at 10% -10%, #e0f2fe, transparent 40%), var(--bg); }
-    .container { max-width: 1100px; margin: 0 auto; padding: 28px 16px 60px; }
-    header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: 18px; }
-    .brand { display:flex; gap:12px; align-items:center; }
-    .brand svg { width:34px; height:34px; }
-    .brand h1 { font-size: clamp(20px, 3vw, 28px); margin:0; letter-spacing: -.02em; }
-    .sub { color: var(--muted); font-size: 14px; margin-top:4px; }
-    .panel { background: var(--card); border:1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px; }
-    .row { display:flex; flex-wrap: wrap; gap: 14px; align-items: center; }
-    .dropzone { display:grid; place-items:center; text-align:center; padding: 32px; border:2px dashed #cbd5e1; border-radius: var(--radius);
-      transition: border-color .2s, background .2s; background: #f8fafc; }
-    .dropzone.dragover { border-color: var(--brand); background: #f0f9ff; }
-    .btn { appearance:none; border:1px solid var(--brand); background: var(--brand); color:white; border-radius: 12px; padding: 10px 14px; font-weight:600; cursor:pointer; transition: transform .02s ease, box-shadow .2s, background .2s, border-color .2s; box-shadow: 0 6px 14px rgba(14,165,233,.25); }
-    .btn:hover { background: var(--brand-pressed); border-color: var(--brand-pressed); }
-    .btn:active { transform: translateY(1px); }
-    .btn.secondary { background: transparent; color: var(--brand); box-shadow:none; }
-    .btn.destructive { border-color: var(--err); color: white; background: var(--err); box-shadow: 0 6px 14px rgba(239,68,68,.2); }
-    .btn:disabled { opacity:.45; cursor:not-allowed; box-shadow:none; }
-    .hint { font-size: 13px; color: var(--muted); }
-    .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap:14px; margin-top: 18px; }
-    .card { background: white; border:1px solid var(--border); border-radius: 14px; overflow: clip; box-shadow: var(--shadow); display:flex; flex-direction:column; }
-    .thumb { aspect-ratio:1.4/1; display:grid; place-items:center; background:#f1f5f9; }
-    .thumb img { max-width:100%; max-height:100%; object-fit:contain; display:block; }
-    .meta { padding: 12px; display:grid; gap:10px; }
-    .meta .name { font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .meta .small { color: var(--muted); font-size: 12px; display:flex; gap:10px; align-items:center; }
-    .progress { height: 8px; background:#eef2f7; border-radius: 999px; overflow:hidden; }
-    .progress > span { display:block; height:100%; width:0; background: linear-gradient(90deg, var(--brand), #22c55e); transition: width .25s ease; }
-    footer { margin-top: 30px; color: var(--muted); font-size: 13px; text-align:center; }
-    .badge { display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius: 999px; background: #ecfeff; border:1px solid #a5f3fc; color: #155e75; font-weight: 600; font-size: 12px; }
-    .toolbar { display:flex; flex-wrap:wrap; gap:8px; justify-content: flex-end; margin-top: 12px; }
-    .pill { display:inline-flex; align-items:center; gap:6px; background:#eef2f7; border:1px solid var(--border); color:#0f172a; border-radius:999px; padding:8px 10px; font-size:13px; }
-    .pill b { font-variant-numeric: tabular-nums; font-weight:700; }
-    .hidden { display:none !important; }
-
-    /* 광고 컨테이너(결과 하단 전용) */
-    .ad-wrap { margin-top: 18px; display:none; }
-    .ad-wrap.active { display:block; }
+    :root { --bg:#f7f8fb; --card:#fff; --border:#e5e7eb; --text:#0f172a; --muted:#64748b;
+      --brand:#0ea5e9; --brand-pressed:#0284c7; --ring:rgba(14,165,233,.35);
+      --ok:#16a34a; --warn:#eab308; --err:#ef4444; --radius:16px; --shadow:0 10px 25px rgba(2,6,23,.06), 0 2px 6px rgba(2,6,23,.08);}
+    *{box-sizing:border-box} html,body{height:100%}
+    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Noto Sans,Helvetica,Arial,'Apple Color Emoji','Segoe UI Emoji';color:var(--text);background:radial-gradient(1200px 800px at 10% -10%, #e0f2fe, transparent 40%),var(--bg)}
+    .container{max-width:1100px;margin:0 auto;padding:28px 16px 60px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px}
+    nav a{color:#0f172a;text-decoration:none;margin-right:14px;font-size:14px}
+    nav a:hover{text-decoration:underline}
+    .brand{display:flex;gap:12px;align-items:center}
+    .brand svg{width:34px;height:34px}
+    .brand h1{font-size:clamp(20px,3vw,28px);margin:0;letter-spacing:-.02em}
+    .sub{color:var(--muted);font-size:14px;margin-top:4px}
+    .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px}
+    .row{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+    .dropzone{display:grid;place-items:center;text-align:center;padding:32px;border:2px dashed #cbd5e1;border-radius:var(--radius);transition:border-color .2s,background .2s;background:#f8fafc}
+    .dropzone.dragover{border-color:var(--brand);background:#f0f9ff}
+    .btn{appearance:none;border:1px solid var(--brand);background:var(--brand);color:#fff;border-radius:12px;padding:10px 14px;font-weight:600;cursor:pointer;transition:transform .02s,box-shadow .2s,background .2s,border-color .2s;box-shadow:0 6px 14px rgba(14,165,233,.25)}
+    .btn:hover{background:var(--brand-pressed);border-color:var(--brand-pressed)}
+    .btn:active{transform:translateY(1px)}
+    .btn.secondary{background:transparent;color:var(--brand);box-shadow:none}
+    .btn.destructive{border-color:var(--err);color:#fff;background:var(--err);box-shadow:0 6px 14px rgba(239,68,68,.2)}
+    .btn:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+    .hint{font-size:13px;color:var(--muted)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-top:18px}
+    .card{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:clip;box-shadow:var(--shadow);display:flex;flex-direction:column}
+    .thumb{aspect-ratio:1.4/1;display:grid;place-items:center;background:#f1f5f9}
+    .thumb img{max-width:100%;max-height:100%;object-fit:contain;display:block}
+    .meta{padding:12px;display:grid;gap:10px}
+    .meta .name{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .meta .small{color:var(--muted);font-size:12px;display:flex;gap:10px;align-items:center}
+    .progress{height:8px;background:#eef2f7;border-radius:999px;overflow:hidden}
+    .progress>span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--brand),#22c55e);transition:width .25s}
+    footer{margin-top:30px;color:var(--muted);font-size:13px;text-align:center}
+    .pill{display:inline-flex;align-items:center;gap:6px;background:#eef2f7;border:1px solid var(--border);color:#0f172a;border-radius:999px;padding:8px 10px;font-size:13px}
+    .hidden{display:none!important}
+    .ad-wrap{margin-top:18px;display:none}
+    .ad-wrap.active{display:block}
+    /* Consent banner */
+    #consent-banner{position:fixed;left:16px;right:16px;bottom:16px;background:#ffffff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);padding:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;z-index:999}
+    #consent-banner p{margin:0;font-size:13px;color:#0f172a;flex:1 1 240px}
   </style>
 </head>
 <body>
@@ -131,6 +148,13 @@
           <div class="sub">Everything runs <b>inside your browser</b>. Files are <b>never uploaded</b>.</div>
         </div>
       </div>
+      <!-- 간단 네비게이션: E-E-A-T/사이트성 강화 -->
+      <nav aria-label="Primary">
+        <a href="/about.html">About</a>
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+        <a href="/contact.html">Contact</a>
+      </nav>
     </header>
 
     <section class="panel" aria-label="Upload">
@@ -145,55 +169,88 @@
             </div>
             <input id="fileInput" class="hidden" type="file" accept=".webp,.avif,image/webp,image/avif" multiple />
           </div>
-          <div class="toolbar">
+          <div class="row" style="gap:8px; margin-top:10px;">
             <button id="convertAllBtn" class="btn" disabled>Convert all</button>
             <button id="clearBtn" class="btn secondary" disabled>Clear list</button>
+            <span class="pill" title="Output format">Output: <b>PNG</b></span>
           </div>
         </div>
-        <div style="width: 320px; max-width: 100%;">
-          <div class="pill" title="Output format">Output: <b>PNG</b></div>
-          <p class="hint" style="margin-top:10px; line-height:1.6;">
+        <div style="width: 340px; max-width: 100%;">
+          <p class="hint" style="margin:0; line-height:1.6;">
             • Preserves transparency (alpha)<br/>
             • EXIF/metadata may not be included in PNG<br/>
             • Very large images may hit memory limits
           </p>
-          <details>
+          <details style="margin-top:6px;">
             <summary class="hint">Browser support</summary>
-            <p class="hint" style="margin-top:6px;">
-              Modern Chrome/Edge/Firefox/Safari can decode WEBP & AVIF. Unsupported browsers will show a load error.
-            </p>
+            <p class="hint" style="margin-top:6px;">Modern Chrome/Edge/Firefox/Safari can decode WEBP & AVIF. Unsupported browsers will show a load error.</p>
           </details>
         </div>
       </div>
 
       <div id="grid" class="grid" aria-live="polite" aria-busy="false"></div>
 
-      <!-- ✅ 광고는 결과(카드)가 생긴 후에만 로드되는 “지연 슬롯” -->
+      <!-- ✅ 광고는 ‘파일 카드 생성 후 + 동의 후’에만 로드 -->
       <div id="ad-after-grid" class="ad-wrap" aria-label="Advertisement"></div>
     </section>
 
+    <!-- 🔥 긴 형식 가이드(1,000+ 단어) : Thin content 해소 -->
     <section class="panel" style="margin-top:16px;">
-      <h2 style="margin:0 0 8px;">How to convert WEBP or AVIF to PNG (fast & offline)</h2>
-      <ol class="hint" style="margin-top:6px;">
-        <li>Drag and drop WEBP/AVIF images, or click <b>Choose files</b>.</li>
-        <li>Click <b>Convert</b> on each card or <b>Convert all</b>.</li>
-        <li>Download the generated PNG files. That’s it!</li>
-      </ol>
+      <h2 style="margin:0 0 10px;">Convert WEBP or AVIF to PNG (fast, private, and offline)</h2>
+      <p class="hint" style="line-height:1.7">
+        WEBP and AVIF are modern image formats that deliver excellent compression and high visual quality. However, certain workflows still require PNG for lossless editing, alpha transparency in legacy tools, or compatibility with CI/CD pipelines and desktop apps. This page explains when to prefer PNG, how offline conversion works in your browser, and how to fix common issues such as memory limits, color shifts, or failed previews. Everything below is written for non-experts but includes power-user tips for batch processing and automation.
+      </p>
+      <h3>When should you convert to PNG?</h3>
+      <ul class="hint">
+        <li><b>Lossless editing:</b> PNG keeps exact pixel data, ideal for pixel art, UI assets, and scientific plots.</li>
+        <li><b>Alpha transparency:</b> Some apps mishandle WEBP/AVIF alpha; PNG supports it universally.</li>
+        <li><b>Tool compatibility:</b> Older CMS, printers, and desktop software expect PNG.</li>
+        <li><b>Automation:</b> Build steps that rely on PNG (e.g., sprite sheets) are still common.</li>
+      </ul>
+      <h3>How does offline conversion work?</h3>
+      <p class="hint">
+        This tool decodes images via the browser’s native decoders (ImageBitmap or HTMLImageElement) and re-encodes using Canvas toBlob. No data leaves your device. On slow machines, decoding very large images can exhaust memory. If that happens, close other tabs or split batches.
+      </p>
+      <h3>Troubleshooting</h3>
+      <ul class="hint">
+        <li><b>“Preview failed”</b>: Your browser may lack AVIF support. Update Chrome/Edge/Firefox/Safari and try again.</li>
+        <li><b>Color differences</b>: Check color profiles; some viewers ignore embedded ICC.</li>
+        <li><b>Huge output</b>: PNG is lossless; try optimizing later with pngquant/oxipng if size matters.</li>
+        <li><b>Memory errors</b>: Convert fewer files at once or reduce image dimensions beforehand.</li>
+      </ul>
+      <h3>Privacy and security</h3>
+      <p class="hint">
+        Conversions happen locally; no uploads, servers, or databases are involved. If you handle confidential imagery, this approach avoids the compliance risk of cloud uploads.
+      </p>
+      <h3>Batch workflow tips</h3>
+      <ul class="hint">
+        <li>Use “Convert all” for small/medium batches; for huge sets, run in smaller chunks.</li>
+        <li>Organize output with a dedicated folder; the tool keeps original filenames and swaps the extension to .png.</li>
+        <li>Check transparency in an editor if the source had semi-transparent pixels.</li>
+      </ul>
       <details>
-        <summary class="hint">FAQ · Is this converter safe for sensitive images?</summary>
-        <p class="hint">Yes. Conversion happens locally in your browser via Canvas APIs. <b>No uploads</b>, <b>no servers</b>, and <b>no database</b> are involved.</p>
+        <summary class="hint">FAQ · Is this converter suitable for enterprise use?</summary>
+        <p class="hint">Yes—many enterprises prefer client-side tools for privacy reasons. You can audit the page easily since it’s static.</p>
       </details>
-      <details>
-        <summary class="hint">Tips</summary>
-        <p class="hint">If an image fails to preview, your browser may not support the format. Try the latest Chrome/Edge/Firefox/Safari.</p>
-      </details>
+      <p class="hint" style="margin-top:14px;">Last updated: <time id="updated"></time></p>
     </section>
 
     <footer>
       <p>© <span id="year"></span> WEBP·AVIF → PNG Converter. Static & open-source friendly.</p>
+      <p><a href="/sitemap.xml">Sitemap</a> · <a href="/robots.txt">Robots</a></p>
     </footer>
   </div>
 
+  <!-- ✅ 간단 CMP 배너 (동의 후에만 광고 로드) -->
+   <!--
+  <div id="consent-banner" role="dialog" aria-live="polite" aria-label="Consent banner">
+    <p>We use cookies for ads & basic analytics. Your choice applies to this site only.</p>
+    <div>
+      <button class="btn" onclick="__acceptAdsConsent()">Accept</button>
+      <button class="btn secondary" onclick="__rejectAdsConsent()">Reject</button>
+    </div>
+  </div>
+-->
   <template id="cardTpl">
     <article class="card" data-state="idle" aria-label="file card">
       <div class="thumb"><img alt="preview" loading="lazy"/></div>
@@ -223,7 +280,7 @@
     const swapExtToPng = (name) => name.replace(/\.[^.]+$/, '') + '.png';
 
     // ================================
-    // 상태 관리
+    // 상태
     // ================================
     const state = { items: [] }; // { id, file, url, outBlobUrl?, width?, height?, status }
     const el = (sel, root=document) => root.querySelector(sel);
@@ -234,39 +291,33 @@
     const convertAllBtn = el('#convertAllBtn');
     const clearBtn = el('#clearBtn');
     el('#year').textContent = new Date().getFullYear();
+    el('#updated').textContent = new Date().toISOString().slice(0,10);
 
     // ================================
-    // 🔐 AdSense 지연 로드 매니저
+    // 🔐 광고 지연 로드 매니저 (동의 + 카드 생성 후)
     // ================================
     let adsInitialized = false;
-    function ensureAdsAfterContent(){
-      // 파일 카드가 최소 1개 이상 생성된 뒤에만 광고 스크립트 로드
+    function tryEnsureAdsAfterContent(){
       if (adsInitialized) return;
-      if (state.items.length === 0) return;
-
+      if (!window.__adsReady) return;               // 동의 후 스크립트 로드 완료
+      if (state.items.length === 0) return;         // 카드가 생긴 뒤에만
       adsInitialized = true;
 
-      // 1) AdSense 스크립트 주입 (Auto Ads 사용 X, 수동 슬롯만)
-      const s = document.createElement('script');
-      s.async = true;
-      s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7717686478398902';
-      s.crossOrigin = 'anonymous';
-      s.onload = () => {
-        // 2) 수동 디스플레이 슬롯 생성 (반응형)
-        const wrap = el('#ad-after-grid');
-        const ins = document.createElement('ins');
-        ins.className = 'adsbygoogle';
-        ins.style.display = 'block';
-        ins.setAttribute('data-ad-client', 'ca-pub-7717686478398902');
-        ins.setAttribute('data-ad-slot', 'f08c47fec0942fa0'); // ← 실제 슬롯 ID로 교체
-        ins.setAttribute('data-ad-format', 'auto');
-        ins.setAttribute('data-full-width-responsive', 'true');
-        wrap.appendChild(ins);
+      const wrap = el('#ad-after-grid');
+      const ins = document.createElement('ins');
+      ins.className = 'adsbygoogle';
+      ins.style.display = 'block';
+      ins.setAttribute('data-ad-client', 'ca-pub-7717686478398902');
+      ins.setAttribute('data-ad-slot', 'REPLACE_WITH_YOUR_SLOT_ID'); // ← ★ 숫자형 슬롯 ID로 교체 ★
+      ins.setAttribute('data-ad-format', 'auto');
+      ins.setAttribute('data-full-width-responsive', 'true');
+      wrap.appendChild(ins);
 
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
-        wrap.classList.add('active'); // 시각적으로 표시
-      };
-      document.head.appendChild(s);
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+      wrap.classList.add('active');
+      // 동의 배너는 한 번 표시 후 제거
+      const cb = document.getElementById('consent-banner');
+      if (cb) cb.remove();
     }
 
     // ================================
@@ -295,9 +346,9 @@
       }
       updateToolbar();
 
-      // ✅ 최초 콘텐츠 생성 시점에만 광고 초기화
+      // 카드가 최초 생성된 경우, (동의 후) 광고 슬롯 시도
       if (wasEmpty && state.items.length > 0) {
-        ensureAdsAfterContent();
+        tryEnsureAdsAfterContent();
       }
     }
 
@@ -428,21 +479,18 @@
       }
       state.items = [];
       grid.innerHTML = '';
-
-      // ⚠️ 콘텐츠가 다시 '빈 상태'가 되었으니 광고 컨테이너를 숨김
       const wrap = el('#ad-after-grid');
       wrap.classList.remove('active');
       wrap.innerHTML = '';
-
       updateToolbar();
-      adsInitialized = false; // 재진입 시점에서만 다시 로드
+      adsInitialized = false;
     }
 
     // ================================
-    // 이벤트 바인딩
+    // 이벤트
     // ================================
     pickBtn.addEventListener('click', (e) => { e.stopPropagation(); fileInput.click(); });
-    fileInput.addEventListener('change', (e) => addFiles(e.target.files));
+    fileInput.addEventListener('change', (e) => { addFiles(e.target.files); tryEnsureAdsAfterContent(); });
 
     ['dragenter','dragover'].forEach(type => dropzone.addEventListener(type, (e)=>{
       e.preventDefault(); e.stopPropagation(); dropzone.classList.add('dragover');
@@ -450,12 +498,11 @@
     ['dragleave','drop'].forEach(type => dropzone.addEventListener(type, (e)=>{
       e.preventDefault(); e.stopPropagation(); dropzone.classList.remove('dragover');
     }));
-    dropzone.addEventListener('drop', (e)=>{ const dt = e.dataTransfer; if (!dt) return; addFiles(dt.files); });
+    dropzone.addEventListener('drop', (e)=>{ const dt = e.dataTransfer; if (!dt) return; addFiles(dt.files); tryEnsureAdsAfterContent(); });
     dropzone.addEventListener('click', () => fileInput.click());
 
     convertAllBtn.addEventListener('click', convertAll);
     clearBtn.addEventListener('click', clearAll);
-
     dropzone.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
     });
